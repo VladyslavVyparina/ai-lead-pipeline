@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+{% block title %}{{ b.name }} — AI Lead Pipeline{% endblock %}
+{% block content %}
+<p class="muted" style="margin:0 0 12px;"><a href="/ui/leads">← до списку лідів</a></p>
+<div class="page-head">
+  <p class="eyebrow">{{ b.category }} · {{ b.city }} · {{ b.route }}</p>
+  <h1>{{ b.name }}
+    <span class="badge {% if b.state in ['won','approved','sql'] %}green{% elif b.state in ['rejected','suppressed','lost'] %}red{% endif %}">{{ b.state }}</span>
+    {% if qualification and qualification.tier %}<span class="badge">Tier {{ qualification.tier }}</span>{% endif %}
+  </h1>
+  <p class="lede">
+    {% if b.website_url %}<a href="{{ b.website_url }}" target="_blank">сайт</a>{% endif %}
+    {% if b.website_url and b.profile_url %} · {% endif %}
+    {% if b.profile_url %}<a href="{{ b.profile_url }}" target="_blank">джерело</a>{% endif %}
+  </p>
+</div>
+
+<div class="card">
+  <h2>Дії</h2>
+  <div class="actions">
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/enrich"><button class="small secondary">Run live enrichment</button></form>
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/score"><button class="small">Оцінити (FitQL)</button></form>
+    {% if b.state == 'shortlisted' %}
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/approve-preview">
+      <button>Approve preview (template pipeline)</button>
+    </form>
+    {% endif %}
+    {% if next_states %}
+    <form class="inline actions" method="post" action="/ui/leads/{{ b.id }}/transition">
+      <select name="target" style="width:auto;">
+        {% for s in next_states %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+      </select>
+      <button class="small secondary">Змінити стан</button>
+    </form>
+    {% endif %}
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/build-preview"><button class="small secondary">Збудувати превʼю (legacy)</button></form>
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/outreach-draft"><button class="small secondary">Outreach draft з ресерчу</button></form>
+    <form class="inline actions" method="post" action="/ui/leads/{{ b.id }}/proposal">
+      <select name="offer_package" style="width:auto;">
+        <option value="local_pro">Local Pro (€500-600)</option>
+        <option value="automation_pro">Automation Pro (€700-900)</option>
+        <option value="basic">Basic (€300)</option>
+      </select>
+      <button class="small secondary">Створити пропозицію</button>
+    </form>
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/suppress"
+          onsubmit="return confirm('Заблокувати всі контакти з цим бізнесом? Дію не можна автоматично скасувати.');">
+      <input type="hidden" name="reason" value="manual">
+      <button class="small danger">Suppress</button>
+    </form>
+    {% if b.state in ['new','validated','mql','fitql','shortlisted','nurture'] %}
+    <form class="inline" method="post" action="/ui/leads/{{ b.id }}/reject" onsubmit="return confirm('Reject this lead?');">
+      <button class="small danger">Reject</button>
+    </form>
+    {% endif %}
+  </div>
+  {% if qualification %}
+  <p style="margin-bottom:8px;">FitQL <strong>{{ qualification.total }}</strong>
+    <span class="badge">{{ qualification.routing }}</span>
+    {% if qualification.tier %}<span class="badge green">Tier {{ qualification.tier }}</span>{% endif %}
+    <span class="muted">рубрика {{ qualification.rubric_version }}</span>
+  </p>
+  {% if qualification.breakdown %}
+  <p class="muted" style="margin:0 0 8px;">
+    Breakdown:
+    {% for k, v in qualification.breakdown.items() if k != 'total' %}
+      {{ k }} {{ v }}{% if not loop.last %} · {% endif %}
+    {% endfor %}
+  </p>
+  {% endif %}
+  {% if qualification.reasons %}
+  <p style="margin:0;">Reasons:
+    {% for r in qualification.reasons %}<span class="badge gray">{{ r }}</span> {% endfor %}
+  </p>
+  {% else %}
+  <p class="muted" style="margin-bottom:0;">
+    {% for k, v in qualification.scores.items() %}{{ k }}: {{ v|round(0)|int }}{% if not loop.last %}, {% endif %}{% endfor %}
+  </p>
+  {% endif %}
+  {% endif %}
+</div>
+
+{% if exclusion_warnings %}
+<div class="card" style="border-color:#b42318;">
+  <h2>Exclusion and review warnings</h2>
+  <ul>{% for warning in exclusion_warnings %}<li>{{ warning }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2>AI usage and cost</h2>
+  <p>
+    <span class="badge">{{ ai_token_total }} tokens</span>
+    <span class="badge">${{ '%.6f'|format(ai_cost_total) }} estimated</span>
+  </p>
+  {% if ai_usage %}
+  <table>
+    <tr><th>Operation</th><th>Model</th><th>Tokens</th><th>Cost</th><th>Status</th></tr>
+    {% for item in ai_usage %}
+    <tr>
+      <td>{{ item.operation }}</td>
+      <td>{{ item.model }}</td>
+      <td>{{ item.input_tokens }} in / {{ item.cached_input_tokens }} cached / {{ item.output_tokens }} out</td>
+      <td>${{ '%.6f'|format(item.estimated_cost_usd or 0) }}</td>
+      <td><span class="badge {% if item.status == 'succeeded' %}green{% endif %}">{{ item.status }}</span></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">No AI call has been made for this lead. Deterministic processing remains free.</p>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="card">
+    <h2>Recommended contact</h2>
+    {% if recommended_contact.channel %}
+      <p><span class="badge green">{{ recommended_contact.channel }}</span> <strong>{{ recommended_contact.recipient }}</strong></p>
+      <p class="muted">{{ recommended_contact.reason }}</p>
+    {% else %}
+      <p class="muted">{{ recommended_contact.reason }}</p>
+    {% endif %}
+  </div>
+  <div class="card">
+    <h2>Source records</h2>
+    {% if source_records %}
+    <table>
+      <tr><th>Provider</th><th>Rating</th><th>Captured</th></tr>
+      {% for source in source_records %}
+      <tr>
+        <td>{{ source.provider_id or '—' }}{% if source.provenance.url %}<div><a href="{{ source.provenance.url }}" target="_blank">source</a></div>{% endif %}</td>
+        <td>{{ source.provider_rating if source.provider_rating is not none else '—' }} · {{ source.provider_review_count if source.provider_review_count is not none else '—' }} reviews</td>
+        <td>{{ source.captured_at.strftime('%Y-%m-%d %H:%M') if source.captured_at else '—' }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">No source record.</p>{% endif %}
+  </div>
+</div>
+
+{% if fact_summary %}
+<div class="card">
+  <h2>Evidence status</h2>
+  <p class="muted" style="margin:0;">
+    <span class="badge green">confirmed {{ fact_summary.confirmed|length }}</span>
+    <span class="badge">inferred {{ fact_summary.inferred|length }}</span>
+    <span class="badge gray">missing {{ fact_summary.missing|length }}</span>
+    <span class="badge red">conflicting {{ fact_summary.conflicting|length }}</span>
+    <span class="badge">stale {{ fact_summary.stale|length }}</span>
+  </p>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="card">
+    <h2>Контакти</h2>
+    {% if contacts %}
+    <table>
+      {% for c in contacts %}
+      <tr>
+        <td><span class="badge gray">{{ c.channel }}</span></td>
+        <td>{{ c.value }}</td>
+        <td>
+          {% if c.verified %}<span class="badge green">верифіковано</span>
+          {% else %}
+          <form class="inline" method="post" action="/ui/leads/{{ b.id }}/contacts/{{ c.id }}/verify">
+            <button class="small secondary">Верифікувати</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">Контактів немає.</p>{% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Аудит сайту</h2>
+    <form method="post" action="/ui/leads/{{ b.id }}/audit">
+      <label><input type="checkbox" name="has_website" style="width:auto;" {% if audit and audit.has_website %}checked{% endif %}> Має сайт</label>
+      <label><input type="checkbox" name="mobile_ok" style="width:auto;" {% if audit and audit.mobile_ok %}checked{% endif %}> Мобільна версія ок</label>
+      <label><input type="checkbox" name="has_booking_cta" style="width:auto;" {% if audit and audit.has_booking_cta %}checked{% endif %}> Є кнопка бронювання</label>
+      <label><input type="checkbox" name="services_clear" style="width:auto;" {% if audit and audit.services_clear %}checked{% endif %}> Послуги зрозумілі</label>
+      <label><input type="checkbox" name="contact_clear" style="width:auto;" {% if audit and audit.contact_clear %}checked{% endif %}> Контакти зрозумілі</label>
+      <label>Нотатки</label>
+      <textarea name="notes">{{ audit.notes if audit else '' }}</textarea>
+      <div style="margin-top:12px;"><button class="small">Зберегти аудит</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card">
+    <h2>Факти (evidence)</h2>
+    {% if evidence %}
+    <table>
+      <tr><th>Ключ</th><th>Значення / evidence</th><th>Статус</th><th>Довіра</th></tr>
+      {% for e in evidence %}
+      <tr>
+        <td>{{ e.fact_key }}</td>
+        <td>{{ e.fact_value }}
+          {% if e.evidence_excerpt %}<div class="muted">{{ e.evidence_excerpt }}</div>{% endif %}
+          {% if e.source_url %}<div class="muted"><a href="{{ e.source_url }}" target="_blank">джерело</a>{% if e.extraction_method %} · {{ e.extraction_method }}{% endif %}</div>{% endif %}
+        </td>
+        <td><span class="badge gray">{{ e.status or 'confirmed' }}</span></td>
+        <td>{{ e.confidence }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}<p class="muted">Фактів ще немає.</p>{% endif %}
+    <form method="post" action="/ui/leads/{{ b.id }}/evidence" style="margin-top:12px;">
+      <div class="row">
+        <div>
+          <label>Ключ</label>
+          <select name="fact_key">
+            <option value="address">address — адреса</option>
+            <option value="hours">hours — години роботи</option>
+            <option value="description">description — опис</option>
+            <option value="rating">rating — рейтинг</option>
+            <option value="review_count">review_count — к-сть відгуків</option>
+            <option value="service_breadth">service_breadth — широта послуг</option>
+            <option value="practitioners">practitioners — к-сть майстрів</option>
+            <option value="locations">locations — к-сть локацій</option>
+            <option value="booking_url">booking_url — лінк бронювання</option>
+          </select>
+        </div>
+        <div><label>Значення</label><input name="fact_value" required></div>
+      </div>
+      <div class="row">
+        <div><label>Лінк на джерело</label><input name="source_url" placeholder="https://..."></div>
+        <div><label>Довіра (0-1)</label><input name="confidence" type="number" step="0.1" min="0" max="1" value="1.0"></div>
+      </div>
+      <div style="margin-top:12px;"><button class="small">Додати факт</button></div>
+    </form>
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Превʼю-сайти</h2>
+      {% if builds %}
+      <table>
+        {% for build in builds %}
+        <tr>
+          <td><span class="badge {% if build.status == 'deployed' %}green{% elif build.status == 'failed' %}red{% else %}gray{% endif %}">{{ build.status }}</span>
+            {% if build.pipeline_stage %}<div class="muted">{{ build.pipeline_stage }}</div>{% endif %}
+          </td>
+          <td>{% if build.preview_url %}<a href="{{ build.preview_url }}" target="_blank">{{ build.preview_url }}</a>{% else %}—{% endif %}
+            {% if build.qa_report and build.qa_report.screenshot_desktop %}
+            <div class="muted">
+              QA screenshots:
+              <a href="{{ build.qa_report.screenshot_desktop }}" target="_blank">desktop</a>
+              · <a href="{{ build.qa_report.screenshot_mobile }}" target="_blank">mobile</a>
+            </div>
+            {% endif %}
+            <div class="muted">шаблон {{ build.template_id }}@{{ build.template_version }}{% if build.expires_at %} · до {{ build.expires_at.strftime('%d.%m.%Y') }}{% endif %}</div></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}<p class="muted">Ще не будувалися.</p>{% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Пропозиції</h2>
+      {% if proposals %}
+      <table>
+        {% for p in proposals %}
+        <tr>
+          <td><strong>{{ p.offer_package }}</strong><div class="muted">pricebook {{ p.pricebook_version }}</div></td>
+          <td>від €{{ p.content.offer.price_from_eur }}{% if p.content.offer.price_to_eur %} до €{{ p.content.offer.price_to_eur }}{% endif %}</td>
+          <td><span class="badge gray">{{ p.status }}</span>
+            {% if proposal_artifacts.get(p.id) %}
+            <div><a href="/private-artifacts/{{ proposal_artifacts[p.id].id }}/download">Download PDF</a></div>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}<p class="muted">Ще немає пропозицій.</p>{% endif %}
+    </div>
+
+    <div class="card">
+      <h2>Повідомлення</h2>
+      {% if messages %}
+      <table>
+        {% for m in messages %}
+        <tr>
+          <td><span class="badge gray">{{ m.channel }}</span> #{{ m.touch_number }}</td>
+          <td>{{ m.body[:80] }}{% if m.body|length > 80 %}…{% endif %}</td>
+          <td><span class="badge {% if m.status == 'sent' %}green{% elif m.status == 'cancelled' %}red{% endif %}">{{ m.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </table>
+      <p class="muted">Керування — у розділі <a href="/ui/outreach">Аутріч</a>.</p>
+      {% else %}<p class="muted">Повідомлень немає. Створіть чернетку в розділі <a href="/ui/outreach">Аутріч</a>.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Commercial outcomes</h2>
+  <form method="post" action="/ui/leads/{{ b.id }}/outcomes">
+    <div class="row">
+      <div>
+        <label>Outcome</label>
+        <select name="outcome" required>
+          <option value="replied">Replied</option>
+          <option value="positive_reply">Positive reply</option>
+          <option value="meeting_booked">Meeting booked</option>
+          <option value="proposal_sent">Proposal sent</option>
+          <option value="won">Won</option>
+          <option value="lost">Lost</option>
+        </select>
+      </div>
+      <div>
+        <label>Message version</label>
+        <select name="message_id">
+          <option value="">—</option>
+          {% for m in messages %}<option value="{{ m.id }}">#{{ m.id }} · {{ m.copy_version }} · {{ m.channel }}</option>{% endfor %}
+        </select>
+      </div>
+      <div>
+        <label>Proposal</label>
+        <select name="proposal_id">
+          <option value="">—</option>
+          {% for p in proposals %}<option value="{{ p.id }}">#{{ p.id }} · {{ p.offer_package }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <label>Loss reason (required when lost)</label>
+    <input name="loss_reason" placeholder="price, timing, no need, competitor, no response...">
+    <label>Notes</label>
+    <textarea name="notes"></textarea>
+    <div style="margin-top:12px;"><button class="small">Record outcome</button></div>
+  </form>
+
+  {% if outcomes %}
+  <table style="margin-top:18px;">
+    <tr><th>Outcome</th><th>Version</th><th>Reason / notes</th><th>When</th></tr>
+    {% for item in outcomes %}
+    <tr>
+      <td><span class="badge {% if item.outcome in ['won','positive_reply','meeting_booked'] %}green{% elif item.outcome == 'lost' %}red{% endif %}">{{ item.outcome }}</span></td>
+      <td>
+        message {{ item.message_id or '—' }}{% if item.message_id %} ({{ message_versions.get(item.message_id, '—') }}){% endif %}
+        · proposal {{ item.proposal_id or '—' }}{% if item.proposal_id %} ({{ proposal_versions.get(item.proposal_id, '—') }}){% endif %}
+      </td>
+      <td>{{ item.loss_reason or item.notes or '—' }}</td>
+      <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</div>
+{% endblock %}

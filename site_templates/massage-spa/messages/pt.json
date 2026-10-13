@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "about": "Sobre",
+    "services": "Serviços",
+    "prices": "Preços",
+    "reviews": "Avaliações",
+    "contact": "Contacto",
+    "location": "Localização",
+    "book": "Agendar"
+  },
+  "hero": {
+    "headline": "Reencontre o seu equilíbrio no Porto.",
+    "subheadline": "Terapias Complementares & Massagem Terapêutica. Um espaço de acolhimento e cuidado por Daiane Dias.",
+    "cta": "Ver Tabela de Preços",
+    "ctaBook": "Agendar Sessão"
+  },
+  "about": {
+    "title": "Sobre",
+    "greeting": "Olá, sou a Daiane Dias.",
+    "description": "A Kaapora é mais do que uma clínica, é um refúgio. Ofereço terapias complementares focadas no seu bem-estar físico e emocional, num ambiente acolhedor onde cada sessão é personalizada para as suas necessidades.",
+    "quote": "Espaço de acolhimento e cuidado"
+  },
+  "pricing": {
+    "title": "Serviços e Preços",
+    "subtitle": "Escolha o tratamento ideal para si",
+    "promo": {
+      "badge": "Promoção",
+      "text": "Preços válidos até 31 de Março de 2026",
+      "cta": "Agende já a sua sessão"
+    },
+    "massage": "Massagens",
+    "treatments": "Tratamentos",
+    "combos": "Combos",
+    "disclaimer": "*Necessário agendamento prévio.",
+    "minutes": "90 Minutos",
+    "duration": "minutos",
+    "bookService": "Agendar"
+  },
+  "services": {
+    "relaxante": "Relaxante",
+    "geotermica": "Geotérmica",
+    "indiana": "Indiana",
+    "facial": "Facial",
+    "modeladora": "Modeladora",
+    "drenagem": "Drenagem Linfática",
+    "shiatsu": "Shiatsu",
+    "reflexologia": "Reflexologia / Escalda-pés",
+    "miofascial": "Liberação Miofascial",
+    "relaxanteMiofascial": "Relaxante + Miofascial",
+    "relaxanteEscaldapes": "Relaxante + Escalda-pés",
+    "drenagemModeladora": "Drenagem + Modeladora"
+  },
+  "location": {
+    "title": "Localização",
+    "heading": "Encontre-nos no Porto",
+    "address": "Morada",
+    "hours": "Horário",
+    "hoursWeekday": "Segunda a Sexta",
+    "hoursWeekdayTime": "15h às 20h",
+    "hoursSunday": "Domingo",
+    "hoursSundayTime": "10h às 18h",
+    "phone": "Telefone",
+    "directions": "Como Chegar"
+  },
+  "contact": {
+    "title": "Contacto",
+    "heading": "Agende a sua sessão",
+    "description": "Entre em contacto para agendar a sua sessão de massagem terapêutica. Estou disponível para esclarecer qualquer dúvida.",
+    "form": {
+      "name": "Nome",
+      "email": "Email",
+      "phone": "Telefone",
+      "message": "Mensagem",
+      "submit": "Enviar Mensagem",
+      "sending": "A enviar...",
+      "success": "Mensagem enviada com sucesso!",
+      "error": "Erro ao enviar mensagem. Por favor, tente novamente."
+    },
+    "whatsapp": "WhatsApp",
+    "call": "Ligar"
+  },
+  "reviews": {
+    "title": "Avaliações",
+    "heading": "O que dizem os nossos clientes",
+    "disclaimer": "Testemunhos reais de clientes"
+  },
+  "footer": {
+    "copyright": "© 2025 Kaapora Massagem Terapêutica. Todos os direitos reservados.",
+    "followUs": "Siga-nos",
+    "businessName": "Kaapora",
+    "tagline": "Massagem Terapêutica"
+  },
+  "meta": {
+    "home": {
+      "title": "Kaapora - Massagem Terapêutica no Porto",
+      "description": "Terapias Complementares & Massagem Terapêutica no Porto. Espaço de acolhimento e cuidado por Daiane Dias. Agende a sua sessão."
+    },
+    "services": {
+      "title": "Serviços - Massagem Terapêutica",
+      "description": "Descubra os nossos serviços de massagem terapêutica: relaxante, geotérmica, drenagem linfática, shiatsu e muito mais no Porto."
+    },
+    "prices": {
+      "title": "Preços - Tabela de Serviços",
+      "description": "Consulte a nossa tabela de preços para massagens terapêuticas e terapias complementares no Porto."
+    },
+    "about": {
+      "title": "Sobre - Daiane Dias Massoterapeuta",
+      "description": "Conheça a Daiane Dias e o espaço Kaapora, dedicado ao seu bem-estar físico e emocional no Porto."
+    },
+    "contact": {
+      "title": "Contacto - Agende a sua Sessão",
+      "description": "Entre em contacto para agendar a sua sessão de massagem terapêutica no Porto. WhatsApp, telefone ou formulário."
+    },
+    "reviews": {
+      "title": "Avaliações - Testemunhos de Clientes",
+      "description": "Leia os testemunhos dos nossos clientes sobre as sessões de massagem terapêutica na Kaapora."
+    }
+  },
+  "sticky": {
+    "book": "Agendar",
+    "call": "Ligar"
+  }
+}

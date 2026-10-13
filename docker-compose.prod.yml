@@ -1,0 +1,149 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lead_pipeline
+      POSTGRES_USER: lead_pipeline
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lead_pipeline -d lead_pipeline"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: valkey/valkey:8-alpine
+    restart: unless-stopped
+    command: ["valkey-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${HOST_PORT:-8000}:8000"
+    environment:
+      APP_ENV: production
+      APP_PORT: 8000
+      DATABASE_URL: postgresql+psycopg://lead_pipeline:${POSTGRES_PASSWORD}@db:5432/lead_pipeline
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?set PUBLIC_BASE_URL}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS}
+      PREVIEW_ORIGIN_REGEX: ${PREVIEW_ORIGIN_REGEX:-}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
+      INBOUND_WEBHOOK_SECRET: ${INBOUND_WEBHOOK_SECRET:?set INBOUND_WEBHOOK_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-auto}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/free}
+      OPENROUTER_SITE_URL: ${OPENROUTER_SITE_URL:-}
+      OPENROUTER_APP_NAME: ${OPENROUTER_APP_NAME:-AI Lead Pipeline}
+      CHAT_MODEL: ${CHAT_MODEL:-gpt-4o-mini}
+      PER_LEAD_TOKEN_BUDGET: ${PER_LEAD_TOKEN_BUDGET:-0.25}
+      AI_MAX_OUTPUT_TOKENS: ${AI_MAX_OUTPUT_TOKENS:-600}
+      # Optional: CSV/manual input remains available without Google Places.
+      GOOGLE_PLACES_API_KEY: ${GOOGLE_PLACES_API_KEY:-}
+      VERCEL_TOKEN: ${VERCEL_TOKEN:?set VERCEL_TOKEN}
+      VERCEL_TEAM_ID: ${VERCEL_TEAM_ID:-}
+      VERCEL_PROJECT_ID: ${VERCEL_PROJECT_ID:?set VERCEL_PROJECT_ID}
+      VERCEL_GITHUB_REPO_ID: ${VERCEL_GITHUB_REPO_ID:?set VERCEL_GITHUB_REPO_ID}
+      VERCEL_GIT_REF: ${VERCEL_GIT_REF:-main}
+      QA_ARTIFACT_DIR: /app/artifacts/preview_qa
+      ARTIFACT_STORAGE_BACKEND: r2
+      ARTIFACT_RETENTION_DAYS: ${ARTIFACT_RETENTION_DAYS:-90}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:?set R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:?set R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:?set R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_PRIVATE: ${R2_BUCKET_PRIVATE:?set R2_BUCKET_PRIVATE}
+      R2_ENDPOINT_URL: ${R2_ENDPOINT_URL:-}
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1}
+      TASK_QUEUE_MODE: celery
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      TASK_MAX_ATTEMPTS: ${TASK_MAX_ATTEMPTS:-3}
+      TASK_RETRY_BACKOFF_SECONDS: ${TASK_RETRY_BACKOFF_SECONDS:-30}
+    volumes:
+      - qa_artifacts:/app/artifacts
+
+  worker:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command:
+      [
+        "celery",
+        "-A",
+        "app.worker.celery_app",
+        "worker",
+        "--loglevel=INFO",
+        "-Q",
+        "discovery,crawl_research,preview,qa",
+      ]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "celery -A app.worker.celery_app inspect ping -d celery@$$HOSTNAME --timeout 5 | grep -q pong",
+        ]
+      interval: 15s
+      timeout: 10s
+      start_period: 20s
+      retries: 5
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+psycopg://lead_pipeline:${POSTGRES_PASSWORD}@db:5432/lead_pipeline
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:?set PUBLIC_BASE_URL}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:?set ALLOWED_HOSTS}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?set ADMIN_TOKEN}
+      INBOUND_WEBHOOK_SECRET: ${INBOUND_WEBHOOK_SECRET:?set INBOUND_WEBHOOK_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-auto}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/free}
+      OPENROUTER_SITE_URL: ${OPENROUTER_SITE_URL:-}
+      OPENROUTER_APP_NAME: ${OPENROUTER_APP_NAME:-AI Lead Pipeline}
+      CHAT_MODEL: ${CHAT_MODEL:-gpt-4o-mini}
+      PER_LEAD_TOKEN_BUDGET: ${PER_LEAD_TOKEN_BUDGET:-0.25}
+      AI_MAX_OUTPUT_TOKENS: ${AI_MAX_OUTPUT_TOKENS:-600}
+      GOOGLE_PLACES_API_KEY: ${GOOGLE_PLACES_API_KEY:-}
+      VERCEL_TOKEN: ${VERCEL_TOKEN:?set VERCEL_TOKEN}
+      VERCEL_TEAM_ID: ${VERCEL_TEAM_ID:-}
+      VERCEL_PROJECT_ID: ${VERCEL_PROJECT_ID:?set VERCEL_PROJECT_ID}
+      VERCEL_GITHUB_REPO_ID: ${VERCEL_GITHUB_REPO_ID:?set VERCEL_GITHUB_REPO_ID}
+      VERCEL_GIT_REF: ${VERCEL_GIT_REF:-main}
+      QA_ARTIFACT_DIR: /app/artifacts/preview_qa
+      ARTIFACT_STORAGE_BACKEND: r2
+      ARTIFACT_RETENTION_DAYS: ${ARTIFACT_RETENTION_DAYS:-90}
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:?set R2_ACCOUNT_ID}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:?set R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:?set R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_PRIVATE: ${R2_BUCKET_PRIVATE:?set R2_BUCKET_PRIVATE}
+      R2_ENDPOINT_URL: ${R2_ENDPOINT_URL:-}
+      TASK_QUEUE_MODE: celery
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      TASK_MAX_ATTEMPTS: ${TASK_MAX_ATTEMPTS:-3}
+      TASK_RETRY_BACKOFF_SECONDS: ${TASK_RETRY_BACKOFF_SECONDS:-30}
+    volumes:
+      - qa_artifacts:/app/artifacts
+
+volumes:
+  postgres_data:
+  qa_artifacts:

@@ -1,0 +1,2 @@
+name,category,city,address,website,profile_url,email,phone,instagram,provider_id,rating,review_count,captured_at
+Example Business,massage_wellness,porto,Example address,https://business.example,https://provider.example/place/123,hello@business.example,+351000000000,@example,provider-place-id,4.7,125,2026-07-23T10:00:00Z

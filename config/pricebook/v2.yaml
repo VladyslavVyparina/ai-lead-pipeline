@@ -1,0 +1,75 @@
+# Skylix four-page wellness proposal template. This is a versioned commercial
+# document; prices and included scope live here, never in rendering code.
+proposal_template_version: skylix-wellness-v1
+
+packages:
+  basic:
+    label: Basic Website
+    price_from_eur: 300
+    scope: 1-page website, custom domain, SEO optimisation setup, Google Analytics and Search Console advanced optimisation
+    ideal_for: Businesses that need an official online presence and to start showing up on Google
+  local_pro:
+    label: Local Pro
+    price_from_eur: 500
+    price_to_eur: 600
+    scope: Everything in Basic Website plus Google Maps setup and online booking system
+    ideal_for: Businesses that want clients to find them on Google and book online easily
+  automation_pro:
+    label: Automation Pro
+    price_from_eur: 700
+    price_to_eur: 900
+    scope: Everything in Local Pro plus simple CRM setup and optional AI assistant integration
+    ideal_for: Businesses that want to manage clients, track visits, and automate communication
+
+addons:
+  business_profile_map:
+    range_eur: [80, 120]
+    scope: Creation/fix assistance, categories, business information and website connection
+  online_booking:
+    range_eur: [150, 250]
+    scope: Tool selection, embedded path, notifications and simple management
+  simple_crm:
+    range_eur: [150, 250]
+    scope: Client/lead database, stages, form integration and guide
+  ai_whatsapp_assistant:
+    range_eur: [200, 300]
+    scope: FAQ/booking support and CRM handoff when approved
+
+support_plans:
+  basic_support:
+    price: 20 - 30 EUR/month
+    included: Hosting, technical support, small text or image updates once per month
+  pro_support:
+    price: 40 - 60 EUR/month
+    included: Everything in Basic Support plus updates for promotions, new services, section changes and basic SEO check
+
+payment_terms: 50% to start, 50% before production launch. Every package includes 30 days launch support. Domains and paid subscriptions are separate.
+
+proposal_layout:
+  agency_website: Skylixagency.com
+  header_asset: assets/proposal/skylix-header.jpg
+  price_list_label: Price List (Massage / Wellness Local Services)
+  base_features:
+    - [Custom domain, Domain with brand name. You own the domain., All packages]
+    - [1-page website (landing), Home page with services, prices, contact details, photos and a call to action to book., All packages]
+    - [Basic SEO, Correct page titles descriptions and local keywords for better indexing., All packages]
+    - [Analytics and Search Console, Connection to Google Analytics and Google Search Console to track visits and performance., All packages]
+  maps_features:
+    - [Profile creation or fix, Create or fix Google Business Profile]
+    - [Correct categories, Set correct business categories]
+    - [Photos and description, Add professional description photos and working hours]
+    - [Website connection, Connect the website to the business profile so clients can click directly to the site]
+  booking_features:
+    - [Tool selection, Choose the best booking solution for the business]
+    - [Booking widget on website, Clients can book directly on the website]
+    - [Notifications, Email or WhatsApp notifications for new bookings]
+    - [Simple admin panel, View confirm and manage bookings]
+  crm_features:
+    - [Client database, Central place for client contacts visit history and notes]
+    - [Status pipeline, Simple stages such as New lead Booked Visited and Regular client]
+    - [Integration with forms, New leads from website or booking go directly into the CRM]
+    - [Video guide, Short video showing how to use and update the CRM]
+  assistant_features:
+    - [Website or WhatsApp assistant, Bot that answers common questions about prices location available services and duration]
+    - [Booking support, Bot suggests available time slots and sends users to the booking page]
+    - [Integration with CRM, Saves contact details and requests into the CRM or list]

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{{ content.seo_title or business_name }}</title>
+  <style>
+    :root { --primary: {{ (content.theme or {}).get('primary', '#18392b') }}; --paper: #fbfaf6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; color: #1b241f; background: var(--paper); }
+    main { width: min(960px, calc(100% - 32px)); margin: auto; }
+    section { padding: 56px 0; }
+    .hero { min-height: 55vh; display: grid; align-content: center; }
+    h1 { color: var(--primary); font-size: clamp(2.4rem, 8vw, 5.5rem); line-height: .95; max-width: 12ch; }
+    .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+    .service { padding: 20px; background: white; border: 1px solid #dfe5df; border-radius: 14px; }
+    .cta { background: var(--primary); color: white; padding: 32px; border-radius: 18px; }
+    a { color: inherit; }
+    form { display: grid; gap: 10px; max-width: 520px; margin-top: 20px; }
+    input, textarea, button { font: inherit; padding: 12px; }
+    button { background: #d9efdf; border: 0; cursor: pointer; font-weight: 700; }
+    footer { padding: 28px 0; font-size: .88rem; opacity: .8; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" data-qa="hero">
+      <p>{{ category }} · {{ city }}</p>
+      <h1>{{ content.hero.headline }}</h1>
+      <p>{{ content.hero.subheadline }}</p>
+    </section>
+
+    <section data-qa="services">
+      <h2>Serviços</h2>
+      <div class="services">
+        {% for service in content.services %}
+        <article class="service"><h3>{{ service.name }}</h3><p>{{ service.description }}</p>{% if service.price %}<p>{{ service.price }}</p>{% endif %}</article>
+        {% else %}
+        <article class="service"><h3>Atendimento personalizado</h3><p>Contacte o espaço para conhecer os serviços disponíveis.</p></article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="cta" data-qa="contact">
+      <h2>{{ content.cta.label }}</h2>
+      <p>{{ content.cta.supporting }}</p>
+      {% if content.contact.phone %}<p><a data-qa-link="phone" href="tel:{{ content.contact.phone }}">{{ content.contact.phone }}</a></p>{% endif %}
+      {% if content.contact.email %}<p><a data-qa-link="email" href="mailto:{{ content.contact.email }}">{{ content.contact.email }}</a></p>{% endif %}
+      {% if content.contact.whatsapp %}<p><a data-qa-link="whatsapp" href="https://wa.me/{{ content.contact.whatsapp|replace('+','')|replace(' ','') }}">WhatsApp</a></p>{% endif %}
+      <form data-qa="booking-form" method="post" action="{{ form_endpoint }}">
+        <input type="hidden" name="build_id" value="{{ build_id }}">
+        <input type="hidden" name="form_token" value="{{ form_token }}">
+        <input name="name" aria-label="Nome" placeholder="Nome" required>
+        <input name="contact" aria-label="Contacto" placeholder="Email ou telefone" required>
+        <textarea name="message" aria-label="Mensagem" placeholder="Mensagem"></textarea>
+        <button type="submit">Enviar pedido</button>
+      </form>
+    </section>
+
+    <footer data-qa="disclaimer">{{ content.disclaimer }}</footer>
+  </main>
+</body>
+</html>

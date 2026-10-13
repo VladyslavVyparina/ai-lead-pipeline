@@ -1,0 +1,133 @@
+# Template Registry v2 (§2.1, §5.1).
+#
+# Core selects a template by business.category, then renders/deploys the
+# matching TemplateManifest. Real Next.js/Lovable templates are audited and
+# published separately (their Vercel projects are wired via
+# VERCEL_TEMPLATE_PROJECTS); the ``local_renderer`` is the offline Jinja
+# artifact used by browser QA and local smoke runs.
+#
+# v2 adds: a `templates` manifest block (per-template metadata + local
+# renderer + deploy routing key), niche themes (spa/cosmetology/dental/coach),
+# and category coverage for spa, cosmetology, dental and coaches.
+preview_expiry_days: 30
+
+# --- Template manifests -------------------------------------------------------
+# deploy_key: routes to VERCEL_TEMPLATE_PROJECTS[deploy_key]; when unmapped the
+# hosting adapter falls back to the default single Vercel project.
+# local_renderer: Jinja file under templates/ used by LocalStubAdapter + QA.
+# status: `live` = bespoke template project audited; `pending` = registered and
+# renders locally, but no dedicated Vercel project wired yet (uses default).
+templates:
+  wellness-next-template:
+    version: v1
+    framework: next
+    deploy_key: wellness
+    local_renderer: preview_static.html
+    required_sections: [hero, services, contact]
+    status: live
+    reference: https://kaapora.pt/pt
+  massage-spa-template:
+    version: v1
+    framework: next
+    deploy_key: massage_spa
+    local_renderer: preview_massage_spa.html
+    source_dir: site_templates/massage-spa
+    required_sections: [hero, services, pricing, location, contact]
+    status: live
+    reference: https://kaapora.pt/pt
+    notes: >-
+      Kaapora-derived Next.js template (self-contained copy under source_dir).
+      SITE_CONFIG-driven via src/lib/preview-config.ts — services + prices,
+      location, WhatsApp booking, brand colors/logo/hero, bilingual structure.
+  dental-next-template:
+    version: v1
+    framework: next
+    deploy_key: dental
+    local_renderer: preview_static.html
+    required_sections: [hero, services, contact]
+    status: pending
+    notes: Regulated/medical vertical — no invented treatments or before/after claims
+  coach-next-template:
+    version: v1
+    framework: next
+    deploy_key: coach
+    local_renderer: preview_static.html
+    required_sections: [hero, services, contact]
+    status: pending
+    reference: https://tiago-rodrigues.lovable.app/
+    notes: Separate offer test — reference is a Lovable/Vite SPA; bespoke Next template pending
+
+# --- Theme tokens (per category) ---------------------------------------------
+themes:
+  default:
+    primary_color: "#2f6f5e"
+    accent_color: "#b08948"
+    font_display: "Fraunces"
+    font_body: "Outfit"
+  # Kaapora-derived defaults (terracotta / sage). Per-lead brand extraction
+  # overrides primary_color/accent_color when a real brand color is found.
+  massage_wellness:
+    primary_color: "#cab0a5"
+    accent_color: "#7ea58d"
+    font_display: "Playfair Display"
+    font_body: "Inter"
+  spa:
+    primary_color: "#cab0a5"
+    accent_color: "#7ea58d"
+    font_display: "Playfair Display"
+    font_body: "Inter"
+  beauty_aesthetics:
+    primary_color: "#c8a89c"
+    accent_color: "#a98a97"
+    font_display: "Playfair Display"
+    font_body: "Inter"
+  cosmetology:
+    primary_color: "#c8a89c"
+    accent_color: "#a98a97"
+    font_display: "Playfair Display"
+    font_body: "Inter"
+  dental:
+    primary_color: "#1f5f7a"
+    accent_color: "#5bb0c4"
+    font_display: "Fraunces"
+    font_body: "Outfit"
+  coach_trainer:
+    primary_color: "#1a2a3a"
+    accent_color: "#e0a44c"
+    font_display: "Fraunces"
+    font_body: "Outfit"
+
+# --- Category -> template routing --------------------------------------------
+categories:
+  massage_wellness:
+    id: massage-spa-template
+    version: v1
+    theme: massage_wellness
+    reference: https://kaapora.pt/pt
+    notes: Primary live wellness reference — Kaapora-based massage/spa template
+  spa:
+    id: massage-spa-template
+    version: v1
+    theme: spa
+  beauty_aesthetics:
+    id: massage-spa-template
+    version: v1
+    theme: beauty_aesthetics
+  cosmetology:
+    id: massage-spa-template
+    version: v1
+    theme: cosmetology
+  dental:
+    id: dental-next-template
+    version: v1
+    theme: dental
+  coach_trainer:
+    id: coach-next-template
+    version: v1
+    theme: coach_trainer
+    reference: https://tiago-rodrigues.lovable.app/
+    notes: Separate template/offer test
+  default:
+    id: wellness-next-template
+    version: v1
+    theme: default

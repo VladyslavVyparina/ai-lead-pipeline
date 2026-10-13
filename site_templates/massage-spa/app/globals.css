@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 33% 95%;
+    --foreground: 24 14% 20%;
+    --card: 30 33% 97%;
+    --card-foreground: 24 14% 20%;
+    --popover: 30 33% 97%;
+    --popover-foreground: 24 14% 20%;
+    --primary: 18 26% 72%;
+    --primary-foreground: 24 14% 15%;
+    --secondary: 30 20% 90%;
+    --secondary-foreground: 24 14% 20%;
+    --muted: 30 15% 88%;
+    --muted-foreground: 24 14% 35%;
+    --accent: 143 18% 57%;
+    --accent-foreground: 30 33% 97%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 24 15% 85%;
+    --input: 24 15% 85%;
+    --ring: 18 26% 72%;
+    --radius: 1rem;
+    --warm-sand: 30 33% 95%;
+    --warm-sand-text: 30 20% 40%;
+    --terracotta: 18 26% 72%;
+    --terracotta-dark: 18 30% 55%;
+    --deep-earth: 24 14% 20%;
+    --sage: 143 18% 57%;
+    --sage-dark: 143 18% 35%;
+    --sage-light: 143 20% 85%;
+    --cream: 40 40% 97%;
+    --glass-bg: 30 33% 97% / 0.7;
+    --glass-border: 30 20% 90% / 0.5;
+    --shadow-soft: 0 4px 20px -4px hsl(24 14% 20% / 0.08);
+    --shadow-medium: 0 8px 30px -8px hsl(24 14% 20% / 0.12);
+    --shadow-glow: 0 0 40px hsl(143 18% 57% / 0.2);
+    --sidebar-background: 30 33% 97%;
+    --sidebar-foreground: 24 14% 20%;
+    --sidebar-primary: 18 26% 72%;
+    --sidebar-primary-foreground: 24 14% 15%;
+    --sidebar-accent: 143 18% 57%;
+    --sidebar-accent-foreground: 30 33% 97%;
+    --sidebar-border: 24 15% 85%;
+    --sidebar-ring: 18 26% 72%;
+  }
+
+  .dark {
+    --background: 24 14% 12%;
+    --foreground: 30 33% 95%;
+    --card: 24 14% 16%;
+    --card-foreground: 30 33% 95%;
+    --popover: 24 14% 16%;
+    --popover-foreground: 30 33% 95%;
+    --primary: 18 26% 72%;
+    --primary-foreground: 24 14% 12%;
+    --secondary: 24 14% 20%;
+    --secondary-foreground: 30 33% 95%;
+    --muted: 24 14% 20%;
+    --muted-foreground: 30 15% 65%;
+    --accent: 143 18% 57%;
+    --accent-foreground: 24 14% 12%;
+    --border: 24 14% 25%;
+    --input: 24 14% 25%;
+    --ring: 18 26% 72%;
+    --sidebar-background: 24 14% 12%;
+    --sidebar-foreground: 30 33% 95%;
+    --sidebar-primary: 18 26% 72%;
+    --sidebar-primary-foreground: 24 14% 12%;
+    --sidebar-accent: 143 18% 57%;
+    --sidebar-accent-foreground: 24 14% 12%;
+    --sidebar-border: 24 14% 25%;
+    --sidebar-ring: 18 26% 72%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-md border border-border/50 rounded-2xl;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300;
+  }
+
+  .glass-card-hover:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+
+  .paper-texture {
+    @apply bg-cream rounded-2xl;
+    background-image: radial-gradient(
+        ellipse at 20% 80%,
+        hsl(var(--terracotta) / 0.03) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse at 80% 20%,
+        hsl(var(--sage) / 0.03) 0%,
+        transparent 50%
+      );
+    box-shadow: var(--shadow-medium);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/90 to-foreground/80;
+  }
+
+  .btn-primary {
+    @apply bg-terracotta text-deep-earth font-medium px-6 py-3 rounded-2xl transition-all duration-300;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .btn-primary:hover {
+    @apply bg-terracotta-dark;
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-1px);
+  }
+
+  .btn-outline {
+    @apply border-2 border-terracotta text-foreground font-medium px-6 py-3 rounded-2xl transition-all duration-300 bg-transparent;
+  }
+
+  .btn-outline:hover {
+    @apply bg-terracotta/10;
+  }
+
+  .section-padding {
+    @apply py-20 md:py-28 px-4 md:px-8;
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}

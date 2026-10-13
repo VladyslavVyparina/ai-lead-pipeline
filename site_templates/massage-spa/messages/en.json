@@ -1,0 +1,123 @@
+{
+  "nav": {
+    "about": "About",
+    "services": "Services",
+    "prices": "Prices",
+    "reviews": "Reviews",
+    "contact": "Contact",
+    "location": "Location",
+    "book": "Book Now"
+  },
+  "hero": {
+    "headline": "Rediscover your balance in Porto.",
+    "subheadline": "Complementary Therapies & Therapeutic Massage. A space of welcome and care by Daiane Dias.",
+    "cta": "View Price List",
+    "ctaBook": "Book Session"
+  },
+  "about": {
+    "title": "About",
+    "greeting": "Hello, I'm Daiane Dias.",
+    "description": "Kaapora is more than a clinic, it's a refuge. I offer complementary therapies focused on your physical and emotional well-being, in a welcoming environment where each session is tailored to your needs.",
+    "quote": "A space of welcome and care"
+  },
+  "pricing": {
+    "title": "Services and Pricing",
+    "subtitle": "Choose the ideal treatment for you",
+    "promo": {
+      "badge": "Promotion",
+      "text": "Prices valid until March 31, 2026",
+      "cta": "Book your session now"
+    },
+    "massage": "Massage",
+    "treatments": "Treatments",
+    "combos": "Combos",
+    "disclaimer": "*Prior booking required.",
+    "minutes": "90 Minutes",
+    "duration": "minutes",
+    "bookService": "Book Now"
+  },
+  "services": {
+    "relaxante": "Relaxation",
+    "geotermica": "Hot Stone",
+    "indiana": "Indian Head",
+    "facial": "Facial",
+    "modeladora": "Body Sculpting",
+    "drenagem": "Lymphatic Drainage",
+    "shiatsu": "Shiatsu",
+    "reflexologia": "Reflexology / Foot Soak",
+    "miofascial": "Myofascial Release",
+    "relaxanteMiofascial": "Relaxation + Myofascial",
+    "relaxanteEscaldapes": "Relaxation + Foot Soak",
+    "drenagemModeladora": "Drainage + Sculpting"
+  },
+  "location": {
+    "title": "Location",
+    "heading": "Find Us in Porto",
+    "address": "Address",
+    "hours": "Hours",
+    "hoursWeekday": "Monday to Friday",
+    "hoursWeekdayTime": "3pm to 8pm",
+    "hoursSunday": "Sunday",
+    "hoursSundayTime": "10am to 6pm",
+    "phone": "Phone",
+    "directions": "Get Directions"
+  },
+  "contact": {
+    "title": "Contact",
+    "heading": "Book your session",
+    "description": "Get in touch to schedule your therapeutic massage session. I'm available to answer any questions.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "message": "Message",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message sent successfully!",
+      "error": "Error sending message. Please try again."
+    },
+    "whatsapp": "WhatsApp",
+    "call": "Call"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "heading": "What our clients say",
+    "disclaimer": "Real client testimonials"
+  },
+  "footer": {
+    "copyright": "© 2025 Kaapora Therapeutic Massage. All rights reserved.",
+    "followUs": "Follow Us",
+    "businessName": "Kaapora",
+    "tagline": "Therapeutic Massage"
+  },
+  "meta": {
+    "home": {
+      "title": "Kaapora - Therapeutic Massage in Porto",
+      "description": "Complementary Therapies & Therapeutic Massage in Porto. A space of welcome and care by Daiane Dias. Book your session."
+    },
+    "services": {
+      "title": "Services - Therapeutic Massage",
+      "description": "Discover our therapeutic massage services: relaxation, hot stone, lymphatic drainage, shiatsu and more in Porto."
+    },
+    "prices": {
+      "title": "Prices - Service List",
+      "description": "Check our price list for therapeutic massages and complementary therapies in Porto."
+    },
+    "about": {
+      "title": "About - Daiane Dias Massage Therapist",
+      "description": "Meet Daiane Dias and the Kaapora space, dedicated to your physical and emotional well-being in Porto."
+    },
+    "contact": {
+      "title": "Contact - Book Your Session",
+      "description": "Get in touch to book your therapeutic massage session in Porto. WhatsApp, phone or contact form."
+    },
+    "reviews": {
+      "title": "Reviews - Client Testimonials",
+      "description": "Read our clients' testimonials about therapeutic massage sessions at Kaapora."
+    }
+  },
+  "sticky": {
+    "book": "Book",
+    "call": "Call"
+  }
+}

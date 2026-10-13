@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>{{ content.seo_title or business_name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #211914;
+      --paper: #f8f5f0;
+      --sand: #eee6da;
+      --line: #ded2c3;
+      --muted: #6d6259;
+      --brand: {{ content.theme.primary_color or '#422110' }};
+      --accent: {{ content.theme.accent_color or '#d0a74e' }};
+      --display: "Playfair Display", Georgia, serif;
+      --body: "DM Sans", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); line-height: 1.5; }
+    a { color: inherit; text-decoration: none; }
+    .shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    .preview-bar { background: var(--ink); color: #fff; padding: .55rem 1rem; font-size: .73rem; letter-spacing: .04em; text-align: center; }
+    .nav { height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { display: flex; align-items: center; gap: .7rem; min-width: 0; font-family: var(--display); font-size: 1.1rem; font-weight: 600; }
+    .brand img { width: 46px; height: 46px; object-fit: contain; border-radius: 50%; background: var(--brand); }
+    .brand span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .button { display: inline-flex; min-height: 46px; padding: 0 1.2rem; border-radius: 999px; align-items: center; justify-content: center; gap: .5rem; background: var(--brand); color: #fff; font-size: .88rem; font-weight: 700; border: 1px solid var(--brand); transition: transform .2s, background .2s; }
+    .button:hover { transform: translateY(-2px); background: var(--ink); }
+    .button--light { background: transparent; color: var(--ink); border-color: var(--line); }
+    .button--light:hover { color: #fff; border-color: var(--ink); }
+    .hero { padding: 0 0 5.5rem; }
+    .hero-grid { min-height: 555px; display: grid; grid-template-columns: 1.03fr .97fr; overflow: hidden; border-radius: 28px; background: #e9ddce; }
+    .hero-copy { padding: clamp(2.4rem, 7vw, 6.25rem); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+    .eyebrow { color: var(--brand); font-size: .7rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-family: var(--display); font-size: clamp(3rem, 5vw, 5.45rem); line-height: .96; letter-spacing: -.05em; margin: 1.1rem 0 1.35rem; max-width: 8ch; }
+    .lead { max-width: 37rem; color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .hero-image { position: relative; min-height: 320px; background: var(--brand); }
+    .hero-image img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.78) contrast(.97); }
+    .hero-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(44, 24, 10, .12), transparent 55%); pointer-events: none; }
+    .facts { position: relative; z-index: 2; margin-top: -2.2rem; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line); border-radius: 18px; background: #fffdfa; box-shadow: 0 16px 35px rgba(51,36,25,.08); overflow: hidden; }
+    .fact { min-height: 100px; padding: 1.25rem 1.5rem; border-right: 1px solid var(--line); }
+    .fact:last-child { border-right: 0; }
+    .fact b { display: block; margin-bottom: .2rem; font-size: .88rem; }
+    .fact span { color: var(--muted); font-size: .83rem; }
+    section { padding: 5.25rem 0; }
+    .section-head { max-width: 40rem; margin-bottom: 2.3rem; }
+    .section-head h2 { font-family: var(--display); font-size: clamp(2.25rem, 4vw, 3.6rem); letter-spacing: -.04em; line-height: 1; margin: .7rem 0; }
+    .section-head p { color: var(--muted); margin-bottom: 0; }
+    .menu { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .service { background: #fffdfa; border: 1px solid var(--line); border-radius: 15px; padding: 1.35rem 1.45rem; }
+    .service-top { display: flex; gap: 1rem; justify-content: space-between; align-items: flex-start; }
+    .service h3 { font-family: var(--display); font-size: 1.35rem; line-height: 1.1; margin: 0; max-width: 19rem; }
+    .price { color: var(--brand); font-size: .83rem; font-weight: 700; text-align: right; white-space: pre-line; max-width: 12rem; }
+    .menu-note { color: var(--muted); font-size: .8rem; margin: 1.35rem 0 0; }
+    .booking-section { background: var(--ink); color: #fff; }
+    .booking-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(2.2rem, 7vw, 7rem); align-items: center; }
+    .booking-section .eyebrow { color: #e4bf76; }
+    .booking-section h2 { font-family: var(--display); font-size: clamp(2.5rem, 4vw, 4.1rem); line-height: .98; letter-spacing: -.04em; margin: .8rem 0 1.1rem; }
+    .booking-section p { color: #d6cfc6; max-width: 27rem; }
+    .booking-form { background: #fffdfa; padding: 1.5rem; border-radius: 18px; color: var(--ink); display: grid; gap: .85rem; }
+    input, textarea { width: 100%; font: inherit; border: 1px solid var(--line); border-radius: 10px; background: #fff; padding: .9rem 1rem; color: var(--ink); }
+    textarea { min-height: 92px; resize: vertical; }
+    .booking-form button { width: 100%; cursor: pointer; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .contact-card { border: 1px solid var(--line); border-radius: 17px; padding: 1.75rem; background: #fffdfa; }
+    .contact-card h3 { font-family: var(--display); font-size: 1.55rem; margin-bottom: 1.3rem; }
+    .contact-row { padding: .9rem 0; border-top: 1px solid var(--line); }
+    .contact-row:first-of-type { border-top: 0; padding-top: 0; }
+    .contact-label { color: var(--muted); font-size: .73rem; font-weight: 700; text-transform: uppercase; letter-spacing: .11em; display: block; margin-bottom: .25rem; }
+    .contact-row a { color: var(--brand); font-weight: 700; }
+    .map-card { min-height: 260px; padding: 1.75rem; border-radius: 17px; background: linear-gradient(135deg, var(--sand), #dbc7af); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; }
+    .map-card h3 { font-family: var(--display); font-size: 2rem; line-height: 1.05; max-width: 13rem; margin-bottom: 1rem; }
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; color: var(--muted); font-size: .76rem; }
+    .footer-row { display: flex; justify-content: space-between; gap: 1rem; }
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 30px, 620px); }
+      .preview-bar { font-size: .64rem; }
+      .nav { height: 67px; }
+      .brand { font-size: .97rem; }
+      .brand img { height: 37px; width: 37px; }
+      .nav .button { min-height: 38px; padding: 0 .9rem; font-size: .75rem; }
+      .hero { padding-bottom: 3.7rem; }
+      .hero-grid { grid-template-columns: 1fr; border-radius: 20px; }
+      .hero-copy { min-height: 420px; padding: 3.1rem 1.55rem 2.5rem; order: 2; }
+      .hero-image { min-height: 280px; order: 1; }
+      h1 { font-size: clamp(3rem, 13vw, 4.4rem); }
+      .lead { font-size: .96rem; }
+      .facts { margin-top: 1rem; grid-template-columns: 1fr; border-radius: 14px; }
+      .fact { min-height: auto; padding: 1rem 1.15rem; border-right: 0; border-bottom: 1px solid var(--line); }
+      .fact:last-child { border-bottom: 0; }
+      section { padding: 3.8rem 0; }
+      .menu, .contact-grid, .booking-grid { grid-template-columns: 1fr; }
+      .service { padding: 1.15rem; }
+      .service h3 { font-size: 1.22rem; }
+      .price { font-size: .76rem; max-width: 9.5rem; }
+      .booking-grid { gap: 2rem; }
+      .booking-section { padding: 3.8rem 0; }
+      .footer-row { display: block; }
+      .footer-row p + p { margin-top: .5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-bar" data-qa="disclaimer">Pré-visualização conceptual não oficial — não representa o negócio.</div>
+  <div class="shell">
+    <nav class="nav">
+      <a class="brand" href="#inicio" aria-label="{{ business_name }}">
+        {% if content.theme.logo_url %}<img src="{{ content.theme.logo_url }}" alt="{{ business_name }}">{% endif %}
+        <span>{{ business_name }}</span>
+      </a>
+      <a class="button" href="#marcacao">Marcar sessão</a>
+    </nav>
+  </div>
+
+  <main id="inicio">
+    <div class="shell hero" data-qa="hero">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">{{ city }} · Massagem tailandesa</span>
+          <h1>{{ business_name }}</h1>
+          <p class="lead">{% if content.hero.subheadline %}{{ content.hero.subheadline }}{% else %}Massagem tailandesa e tratamentos de bem-estar no Porto.{% endif %}</p>
+          <div class="hero-actions">
+            <a class="button" href="#marcacao">Pedir marcação</a>
+            {% if content.contact.phone %}<a class="button button--light" href="tel:{{ content.contact.phone }}">Ligar agora</a>{% endif %}
+          </div>
+        </div>
+        <div class="hero-image">
+          {% if content.theme.hero_image_url %}<img src="{{ content.theme.hero_image_url }}" alt="Espaço de {{ business_name }}">{% endif %}
+        </div>
+      </div>
+      <div class="facts">
+        {% if content.contact.address %}<div class="fact"><b>Porto</b><span>{{ content.contact.address }}</span></div>{% endif %}
+        {% if content.contact.phone %}<div class="fact"><b>Contacto directo</b><span>{{ content.contact.phone }}</span></div>{% endif %}
+        <div class="fact"><b>Tratamentos</b><span>Menu e preços verificados</span></div>
+      </div>
+    </div>
+
+    <section data-qa="services">
+      <div class="shell">
+        <div class="section-head">
+          <span class="eyebrow">Menu de tratamentos</span>
+          <h2>Escolha o seu momento de cuidado.</h2>
+          <p>Os preços abaixo são apresentados apenas quando confirmados na informação pública do negócio.</p>
+        </div>
+        <div class="menu">
+          {% for service in content.services %}
+          <article class="service">
+            <div class="service-top"><h3>{{ service.name }}</h3>{% if service.price %}<span class="price">{{ service.price }}</span>{% endif %}</div>
+          </article>
+          {% endfor %}
+        </div>
+        <p class="menu-note">Para confirmar disponibilidade ou duração, contacte diretamente o espaço.</p>
+      </div>
+    </section>
+
+    <section id="marcacao" class="booking-section">
+      <div class="shell booking-grid">
+        <div>
+          <span class="eyebrow">Marcação simples</span>
+          <h2>Reserve o seu momento.</h2>
+          <p>Envie um pedido e o espaço poderá confirmar consigo o tratamento e o horário disponíveis.</p>
+        </div>
+        <form class="booking-form" data-qa="booking-form" method="post" action="{{ form_endpoint }}">
+          <input type="hidden" name="build_id" value="{{ build_id }}">
+          <input type="hidden" name="form_token" value="{{ form_token }}">
+          <input name="name" aria-label="Nome" placeholder="O seu nome" required>
+          <input name="contact" aria-label="Contacto" placeholder="Email ou telefone" required>
+          <textarea name="message" aria-label="Mensagem" placeholder="Que tratamento procura? (opcional)"></textarea>
+          <button class="button" type="submit">Enviar pedido</button>
+        </form>
+      </div>
+    </section>
+
+    <section data-qa="contact">
+      <div class="shell">
+        <div class="section-head"><span class="eyebrow">Visite-nos</span><h2>Contactos e localização.</h2></div>
+        <div class="contact-grid">
+          <div class="contact-card">
+            <h3>Fale diretamente.</h3>
+            {% if content.contact.phone %}<div class="contact-row"><span class="contact-label">Telefone</span><a data-qa-link="phone" href="tel:{{ content.contact.phone }}">{{ content.contact.phone }}</a></div>{% endif %}
+            {% if content.contact.email %}<div class="contact-row"><span class="contact-label">Email</span><a data-qa-link="email" href="mailto:{{ content.contact.email }}">{{ content.contact.email }}</a></div>{% endif %}
+            {% if content.contact.whatsapp %}<div class="contact-row"><span class="contact-label">WhatsApp</span><a data-qa-link="whatsapp" href="https://wa.me/{{ content.contact.whatsapp|replace('+','')|replace(' ','') }}">Enviar mensagem</a></div>{% endif %}
+            {% if content.contact.address %}<div class="contact-row"><span class="contact-label">Morada</span><span>{{ content.contact.address }}</span></div>{% endif %}
+          </div>
+          <div class="map-card">
+            <span class="eyebrow">Porto</span>
+            <h3>{% if content.contact.address %}{{ content.contact.address }}{% else %}Localização a confirmar{% endif %}</h3>
+            {% if content.contact.address %}<a class="button button--light" href="https://www.google.com/maps/search/?api=1&query={{ content.contact.address|urlencode }}" target="_blank" rel="noopener">Abrir no Maps</a>{% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer><div class="shell footer-row"><p>{{ business_name }} · {{ city }}</p><p>Pré-visualização conceptual não oficial.</p></div></footer>
+</body>
+</html>

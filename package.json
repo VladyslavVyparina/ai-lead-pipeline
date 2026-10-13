@@ -1,0 +1,15 @@
+{
+  "name": "ai-lead-pipeline-ops",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Developer commands for the Python AI Lead Pipeline",
+  "scripts": {
+    "dev": "node scripts/run-dev.mjs",
+    "dev:local": "node scripts/run-dev.mjs --local",
+    "dev:infisical": "node scripts/run-dev.mjs --infisical",
+    "test:dev": "infisical run --env=dev -- py -3.10 -m pytest -q",
+    "verify:ai": "infisical run --env=dev -- py -3.10 scripts/verify_ai_e2e.py",
+    "deploy:prod": "infisical run --env=prod -- docker compose -f docker-compose.prod.yml up -d --build",
+    "status:prod": "infisical run --env=prod -- docker compose -f docker-compose.prod.yml ps"
+  }
+}
