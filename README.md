@@ -40,3 +40,7 @@ cp .env.example .env
 ## What this public copy leaves out
 
 `.env`, SQLite databases, `private_artifacts`, and virtualenv. Do not point this tree at a production database without filling your own secrets locally.
+
+## Documents
+
+`docs/` holds the architecture note, the Release 1 runbook (dated 2026-07-25 in the source tree), the developer handoff, the production deploy, secrets handling, the proposal template, and the website-factory note. `site_template/README.md` is the Next.js preview: one lead changes `SiteConfig` only, the page is `force-dynamic`, and a missing fact is left off the page. The same testing steps as the AI Lead case apply: pytest, the operator UI on port 8000, and a seeded preview on port 3100. See `docs/TESTING.md` when that file is present in this tree.
